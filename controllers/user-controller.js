@@ -30,7 +30,7 @@ const UserController = {
             const user = await prisma.user.create({
                 data: {
                     email,
-                    passwod: hashedPassword,
+                    password: hashedPassword,
                     name,
                     avatarUrl: `/uploads/${avatarName}`
                 }
@@ -50,13 +50,15 @@ const UserController = {
         }
 
         try {
+            //Здесь происходит Идентификация пользователя
             const user = await prisma.user.findUnique({ where: { email } })
 
             if (!user) {
                 return res.status(400).json({ error: "Неверный логин или пароль!" })
             }
 
-            const valid = await bcrypt.compare(password, user.passwod)
+            //Здесь происходит Аутентификация пользователя
+            const valid = await bcrypt.compare(password, user.password)
 
             if (!valid) {
                 return res.status(400).json({ error: "Неверный логин или пароль!" })
